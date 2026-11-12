@@ -121,12 +121,16 @@ for name, model in models.items():
     cms[name] = cm
     
     tn, fp, fn, tp = cm.ravel()
+    spec = tn / (tn + fp)            # Specificity = Recall kelas Normal
+    bal_acc = (rec + spec) / 2       # Balanced Accuracy = (Recall + Specificity) / 2
     metrics_list.append({
         'Model': name,
         'Accuracy (%)': round(acc * 100, 2),
         'Precision (%)': round(prec * 100, 2),
         'Recall (%)': round(rec * 100, 2),
         'F1-Score (%)': round(f1 * 100, 2),
+        'Specificity (%)': round(spec * 100, 2),
+        'Balanced Accuracy (%)': round(bal_acc * 100, 2),
         'TN': tn,
         'FP': fp,
         'FN': fn,
@@ -201,37 +205,44 @@ print(f"   -> Tersimpan di: {fig3_path}")
 # ==============================================================================
 # 5. GENERATE GAMBAR 4: GROUPED BAR CHART KOMPARASI METRIK
 # ==============================================================================
-fig, ax = plt.subplots(figsize=(9, 5))
+fig, ax = plt.subplots(figsize=(11, 5.5))
 
 x = np.arange(len(df_metrics))
-width = 0.18
+# 6 metrik evaluasi, konsisten dengan Tabel 2 jurnal
+metric_specs = [
+    ('Accuracy (%)', 'Accuracy', '#2b5c8f'),
+    ('Precision (%)', 'Precision', '#41924b'),
+    ('Recall (%)', 'Recall', '#e26d2d'),
+    ('F1-Score (%)', 'F1-Score', '#8c564b'),
+    ('Specificity (%)', 'Specificity', '#7b5ea7'),
+    ('Balanced Accuracy (%)', 'Balanced Accuracy', '#7f7f7f'),
+]
+width = 0.13
+offsets = (np.arange(len(metric_specs)) - (len(metric_specs) - 1) / 2) * width
 
-rects1 = ax.bar(x - 1.5*width, df_metrics['Accuracy (%)'], width, label='Accuracy', color='#2b5c8f')
-rects2 = ax.bar(x - 0.5*width, df_metrics['Precision (%)'], width, label='Precision', color='#41924b')
-rects3 = ax.bar(x + 0.5*width, df_metrics['Recall (%)'], width, label='Recall', color='#e26d2d')
-rects4 = ax.bar(x + 1.5*width, df_metrics['F1-Score (%)'], width, label='F1-Score', color='#8c564b')
+all_rects = []
+for (col, label, color), off in zip(metric_specs, offsets):
+    all_rects.append(ax.bar(x + off, df_metrics[col], width, label=label, color=color))
 
 ax.set_ylabel('Nilai Persentase (%)', fontsize=11)
-ax.set_title('Perbandingan Kinerja Model Berdasarkan Metrik Evaluasi', fontsize=13, weight='semibold', pad=12)
+ax.set_title('Perbandingan Kinerja Model Berdasarkan Seluruh Metrik Evaluasi', fontsize=13, weight='bold', pad=12)
 ax.set_xticks(x)
-ax.set_xticklabels(df_metrics['Model'], fontsize=11, weight='semibold')
+ax.set_xticklabels(df_metrics['Model'], fontsize=11, weight='bold')
 ax.set_ylim(70, 100)
-ax.legend(loc='lower right', frameon=True)
+ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.08), ncol=6, frameon=False, fontsize=9.5)
 ax.grid(axis='y', linestyle='--', alpha=0.4)
 
 def autolabel(rects):
     for rect in rects:
         h = rect.get_height()
-        ax.annotate(f'{h:.1f}',
+        ax.annotate(f'{h:.2f}',
                     xy=(rect.get_x() + rect.get_width() / 2, h),
                     xytext=(0, 3),
                     textcoords="offset points",
-                    ha='center', va='bottom', fontsize=8, rotation=0)
+                    ha='center', va='bottom', fontsize=7, rotation=90)
 
-autolabel(rects1)
-autolabel(rects2)
-autolabel(rects3)
-autolabel(rects4)
+for rects in all_rects:
+    autolabel(rects)
 
 plt.tight_layout()
 fig4_path = os.path.join(OUTPUT_DIR, "gambar4_komparasi_metrik.png")

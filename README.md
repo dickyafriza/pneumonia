@@ -2,6 +2,9 @@
 
 Aplikasi web berbasis Streamlit untuk deteksi pneumonia dari citra rontgen (X-Ray) dada menggunakan ekstraksi fitur Gray-Level Co-occurrence Matrix (GLCM) dan model Ensemble Machine Learning (SVM, Random Forest, KNN).
 
+- **Live Demo (Streamlit Cloud)**: [https://pneumonia-ml.streamlit.app/](https://pneumonia-ml.streamlit.app/)
+- **Repositori GitHub**: [https://github.com/dickyafriza/pneumonia](https://github.com/dickyafriza/pneumonia)
+
 ## Cara Menjalankan
 
 1. **Aktifkan Virtual Environment**:

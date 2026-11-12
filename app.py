@@ -101,6 +101,10 @@ st.sidebar.info(
     "2. Sistem mengekstrak fitur GLCM secara otomatis.\n"
     "3. Hasil klasifikasi dan tingkat keyakinan akan langsung muncul."
 )
+st.sidebar.warning(
+    "⚠️ Purwarupa ini hanya untuk demonstrasi penelitian dan "
+    "**bukan pengganti diagnosis dokter spesialis radiologi**."
+)
 
 # =============================================================
 # 4. LAYOUT UTAMA (2 KOLOM SIMETRIS)
